@@ -78,41 +78,33 @@ class Nekotachi_think:
 class K_means(Nekotachi_think):
     def __init__(self):
         super().__init__()
-        self.data_6d = [\
-            self.linear[0],\
-            self.linear[1],\
-            self.linear[2],\
-            self.angle[0],\
-            self.angle[1],\
-            self.angle[2]]
-        self.data_9d = [\
-            self.linear[0],\
-            self.linear[1],\
-            self.linear[2],\
-            self.angle[0],\
-            self.angle[1],\
-            self.angle[2],\
-            self.angular_v[0],\
-            self.angular_v[1],\
-            self.angular_v[2]]
+        self.data_6d = []
+        self.data_9d = []
         self.k_means6 = k_means(data_6d)
         self.k_means9 = k_means(data_9d)
+
+    def data_out(self):
+        print(self.data_6d)
 
     def k_6neko(self):
         keys_k_meaned = list(self.k_means6.keys())
         keys_6 = list(self.k_means6[keys_k_meaned[0]].keys())[:]
         dist = []
         for j in range(len(self.k_means6)):
-            dist.append(sum([(self.k_means6[keys_k_meaned[j]][key] - self.data_9d[k])**2\
+            dist.append(sum([(self.k_means6[keys_k_meaned[j]][key] - self.data_6d[k])**2\
                 for k, key in zip(range(len(keys_6)), keys_6)]))
         if dist[0] == min(dist):
             print('You\'re === A ===')
         elif dist[1] == min(dist):
             print('You\'re === B ===')
-        else:
+        elif dist[2] == min(dist):
             print('You\'re === C ===')
+        elif dist[3] == min(dist):
+            print('You\'re === D ===')
+        else:
+            print('You\'re === F ===')
 
-    def k_9neko(self, data=data_9d):
+    def k_9neko(self):
         keys_k_meaned = list(self.k_means9.keys())
         keys_9 = list(self.k_means9[keys_k_meaned[0]].keys())[:]
         dist = []
@@ -126,12 +118,34 @@ class K_means(Nekotachi_think):
         else:
             print('You\'re === C ===')
 
+    def __data_6d_out(self):
+        tmp_6d = []
+        linear, angular_v, angle = self.collect_data()
+        for lin in linear:
+            tmp_6d.append(lin)
+        for ang in angle:
+            tmp_6d.append(ang)
+        return tmp_6d
+
+    def __data_9d_out(self):
+        tmp_9d = []
+        linear, angular_v, angle = self.collect_data()
+        for lin in linear:
+            tmp_9d.append(lin)
+        for ang in angle:
+            tmp_9d.append(ang)
+        for ang_v in angular_v:
+            tmp_9d.append(ang_v)
+        return tmp_9d
+
     def main(self):
         counter = 0
         rate = rospy.Rate(100)
         while not rospy.is_shutdown():
             if counter > 4:
-                self.k_9neko()
+                self.data_6d = self.__data_6d_out()[:]
+                self.data_9d = self.__data_9d_out()[:]
+                self.k_6neko()
             else:
                 counter += 1
             rate.sleep()
