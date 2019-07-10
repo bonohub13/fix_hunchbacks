@@ -47,5 +47,4 @@ class Shame_inator(IdentifyNeko):
 if __name__ == "__main__":
     rospy.init_node("shame_neko")
     shame = Shame_inator()
-    rate = rospy.Rate(100)
     shame.main()
