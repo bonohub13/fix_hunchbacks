@@ -15,7 +15,8 @@ class Data:
     def __init__(self):
         self.imu_msgs = Imu()
         rospy.Subscriber(DATA_RAW, Imu, self.imu_callback)
-        self.angle_data = self.angle
+        self.angle_data = self.get_angle
+        self.linear, self.angular_v, self.angle = self.get_data()
 
     def imu_callback(self, imu):
         self.imu_msgs = imu
@@ -30,11 +31,11 @@ class Data:
             self.imu_msgs.angular_velocity.y,\
             self.imu_msgs.angular_velocity.z)
         angle = self.angle_data(list(lin), list(angular))
-        print(lin, angular, angle)
+        print(list(lin), list(angular), angle)
 
         return lin, angular, angle
     
-    def angle(self, lin, angular):
+    def get_angle(self, lin, angular):
         angle_C = []
         for i in range(len(lin)):
             if (lin[i] < 0.01) and (-0.01 < lin[i]):
@@ -51,7 +52,13 @@ class Data:
             angle_C.append(arctan(lin[1]/lin[0])/pi*180)
         else:
             angle_C.append(arctan(lin[1]/0.01)/pi*180)
-        return tuple(angle_C)
+
+        angle = []
+
+        for j in range(3):
+            angle.append(angular[j]*0.01 + angle_C[j])
+
+        return angle
 
     def run(self):
         lin, angular, angle = self.get_data()
@@ -75,4 +82,5 @@ class Data:
 
 if __name__ == "__main__":
     rospy.init_node('nekotachi')
-    Data().main()
+    data = Data()
+    data.main()

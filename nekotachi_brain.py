@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import rospy
+import os
+
 from scipy import arctan, pi
 
+from std_msgs.msg import UInt16
 from sensor_msgs.msg import Imu
 
 from k_means import k_means, data_6d, data_9d
@@ -76,12 +79,14 @@ class Nekotachi_think:
         print('\n============================================\n')
 
 class K_means(Nekotachi_think):
-    def __init__(self):
+    def __init__(self, publisher_node=None):
         super().__init__()
         self.data_6d = []
         self.data_9d = []
         self.k_means6 = k_means(data_6d)
         self.k_means9 = k_means(data_9d)
+        self.pub_node = publisher_node
+        self.judge_msg = 0
 
     def data_out(self):
         print(self.data_6d)
@@ -90,19 +95,34 @@ class K_means(Nekotachi_think):
         keys_k_meaned = list(self.k_means6.keys())
         keys_6 = list(self.k_means6[keys_k_meaned[0]].keys())[:]
         dist = []
+        log = []
+        judge_msg = 0
+        # checker = ['A' for a in range(300)]
         for j in range(len(self.k_means6)):
             dist.append(sum([(self.k_means6[keys_k_meaned[j]][key] - self.data_6d[k])**2\
                 for k, key in zip(range(len(keys_6)), keys_6)]))
         if dist[0] == min(dist):
             print('You\'re === A ===')
+            os.system('echo \"A\" >> data/experiment_output.txt')
+            log.append('A')
+            #if log[-301:] == checker:
+            judge_msg = 100
         elif dist[1] == min(dist):
             print('You\'re === B ===')
+            os.system('echo \"B\" >> data/experiment_output.txt')
+            log.append('B')
+            judge_msg = 0
         elif dist[2] == min(dist):
             print('You\'re === C ===')
-        elif dist[3] == min(dist):
-            print('You\'re === D ===')
+            os.system('echo \"C\" >> data/experiment_output.txt')
+            log.append('C')
+            judge_msg = 0
         else:
-            print('You\'re === F ===')
+            print('You\'re === D ===')
+            os.system('echo \"D\" >> data/experiment_output.txt')
+            log.append('D')
+            judge_msg = 0
+        return judge_msg
 
     def k_9neko(self):
         keys_k_meaned = list(self.k_means9.keys())
@@ -146,11 +166,14 @@ class K_means(Nekotachi_think):
                 self.data_6d = self.__data_6d_out()[:]
                 self.data_9d = self.__data_9d_out()[:]
                 self.k_6neko()
+                self.judge_msg = self.k_6neko()
+                self.pub_node.publish(self.judge_msg)
             else:
                 counter += 1
             rate.sleep()
 
 if __name__ == "__main__":
     rospy.init_node('nekotachi_brain')
-    brain = K_means()
+    pub = rospy.Publisher('/judge', UInt16, queue_size=10)
+    brain = K_means(publisher_node=pub)
     brain.main()

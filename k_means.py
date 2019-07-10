@@ -5,7 +5,7 @@ import numpy as np
 from sklearn import cluster
 import matplotlib.pyplot as plt
 
-NUM_CLUSTER = 1
+NUM_CLUSTER = 4
 DATA_6D = 'data/position_data.txt'
 DATA_9D = 'data/angular_data.txt'
 
@@ -27,11 +27,12 @@ def k_means(data): # returns only datas, not graphical data
         data[data_name[4]].tolist(),\
         data[data_name[5]].tolist()]).T
     # print(data_array)
-    pred = cluster.KMeans(n_clusters=3, init='k-means++', random_state=0).fit_predict(data_array)
+    pred = cluster.KMeans(n_clusters=NUM_CLUSTER, init='k-means++', random_state=0).fit_predict(data_array)
     data['cluster_id'] = pred
     # print(data)
-    for i in range(3):
+    for i in range(NUM_CLUSTER):
         k_means['cluster_'+str(i)] = data[data['cluster_id'] == i].mean()
+        del(k_means['cluster_'+str(i)]['cluster_id'])
 
     return k_means
 
@@ -45,7 +46,7 @@ def cluster_weight(k_means):
     plot_graph.set_xticklabels(plot_graph.xaxis.get_majorticklabels(), rotation=0)
 
 if __name__ == "__main__":
-    print(k_means(data_6d))
+    #print(type(k_means(data_6d)))
     """
     k_means_6d = k_means(data_6d)
     cluster_weight(k_means_6d)
