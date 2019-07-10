@@ -32,7 +32,7 @@ class Shame_inator(IdentifyNeko):
             rospy.logerr('Couldn\'t access %s.' % buzzer_file)
 
     def buzzer_callback(self, buzz):
-        self.buzzer_freq(hz=self.data_msgs.data)
+        self.buzzer_freq(buzz.data)
 
     def main(self):
         rate = rospy.Rate(100)
@@ -42,10 +42,10 @@ class Shame_inator(IdentifyNeko):
             self.buzzer_freq()
             if self.identifier[-300:] == self.checker:
                 print('===== MATCH! =====')
+                self.buzzer_freq(hz=100)
             rate.sleep()
 
 if __name__ == "__main__":
     rospy.init_node("shame_neko")
     shame = Shame_inator()
-    rate = rospy.Rate(100)
     shame.main()
