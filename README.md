@@ -7,4 +7,6 @@ This is for 5th semester project to make a system to inform people of their hunc
 1. The ```feader.py``` is for feading datas (x, y, z, theta_x, theta_y, theta_z, angular_velocity(x, y, z))  
 2. the ```k_means.py``` looks at the data and tries the k_means method and returns the data
 
-## === That's pretty much it. Thanks for the time! ===
+## Reference
+- Atsushi Saito
+	- https://github.com/AtsushiSaito/lab_usb_9axisimu_driver.git
