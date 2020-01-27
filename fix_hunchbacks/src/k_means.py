@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import pandas as pd
 import numpy as np
@@ -20,12 +20,12 @@ def k_means(data): # returns only datas, not graphical data
             del(data[data_n])
     # print(data)
     data_name = data.keys()
-    data_array = np.array([data[data_name[0]].tolist(),\
-        data[data_name[1]].tolist(),\
-        data[data_name[2]].tolist(),\
-        data[data_name[3]].tolist(),\
-        data[data_name[4]].tolist(),\
-        data[data_name[5]].tolist()]).T
+    data_array = np.array([data[data_name[0]].tolist(), 
+                           data[data_name[1]].tolist(), 
+                           data[data_name[2]].tolist(),
+                           data[data_name[3]].tolist(),
+                           data[data_name[4]].tolist(),
+                           data[data_name[5]].tolist()]).T
     # print(data_array)
     pred = cluster.KMeans(n_clusters=NUM_CLUSTER, init='k-means++', random_state=0).fit_predict(data_array)
     data['cluster_id'] = pred
